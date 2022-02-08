@@ -1,0 +1,21 @@
+{
+  "name": "cowin-api-endpoint",
+  "version": "1.0.0",
+  "description": "CoWIN Clone DB API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error while testing npm CI\" && exit 1"
+  },
+  "author": "Suvraneel Bhuin",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^14.2.0",
+    "express": "^4.17.2",
+    "mongoose": "^6.1.6"
+  },
+  "engines": {
+    "node": "16.13.1"
+  }
+}
