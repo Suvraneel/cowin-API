@@ -9,6 +9,9 @@ const app = express();
 // Define Port
 const port = process.env.PORT || 3001;
 
+// Define database connection
+const db = mongoose.connect(process.env.MONGODB_URI).catch((error) => console.log({error},'Connection error'));
+
 // Use middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -17,9 +20,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 // Define base routes
-app.get("/", function (res) {
-  res.send({ ping: "Cowin API - Diablo" });
-});
+app.get('/',(req, res)=>{
+  res.send('Cowin API - Diablo')
+})
 
 require("./src/routes/centerRoutes")(app);
 require("./src/routes/userRoutes")(app);
@@ -27,6 +30,6 @@ require("./src/routes/appointmentRoutes")(app);
 require("./src/routes/cityRoutes")(app);
 require("./src/routes/massRoutes")(app);
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => app.listen(port, () => console.log('Server Running at Port:',{port})))
-  .catch((error) => console.log({error},'Connection error'));
+app.listen(port, () => {
+  console.log("Server is running", port);
+});
