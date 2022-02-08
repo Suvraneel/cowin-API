@@ -42,7 +42,7 @@ exports.validate = (req, res) => {
           } else {
             // Checks if user already exists
             User.findOne({ mobile: mobile }, (error, existingUser) => {
-              if (error){
+              if (!(error)){
                 if (existingUser)
                   res.status(200).send(existingUser);
                 else {
