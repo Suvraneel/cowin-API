@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Cities = require("../../cities");
 
 // Get states of India
-exports.show = function (res) {
+exports.show = function (req, res) {
   var states = [];
   for (let city of Cities.DB) {
     states.push(city.state);
