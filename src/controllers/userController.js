@@ -13,7 +13,7 @@ exports.generate = (req, res) => {
     otp.mobile = req.body.mobile;
 
     // OTP generation
-    otp.code = (Math.floor(Math.random() * 99999) + 100000)%100000; // 5 digit OTP
+    otp.code = Math.floor(Math.random() * 8999) + 1000;
 
     otp.save(function (error, savedOTP) {
       if (error)
