@@ -48,12 +48,12 @@ __User__ model should have the following attributes:  *mobile, password (type: s
 - [x] API for user signup/signin
 - [x] API to get user details
 
-### Member - (Not implemented)
+### Member
 Users can add upto 4 members or benificiary. 
 __Member__ model should have the following attributes: *name, aadhaarNumber, age, dose1Taken (boolean), dose2Taken(boolean)*.
 
-- [ ] API for adding a member
-- [ ] API to removing an member
+- [x] API for adding a member
+- [x] API to removing an member
 
 ### Appointment
 Users can book appointment for a member. __Appointment__ model should have the following attributes: *vaccinationCenter (ref), date, status (scheduled, vaccinated), vaccinatedBy (name of the doctor who vaccinated the member)*.

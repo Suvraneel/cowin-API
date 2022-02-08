@@ -1,6 +1,6 @@
-const devController = require("../controllers/massController");
+const massController = require("../controllers/massController");
 
 module.exports = (app) => {
-  app.delete("/developer", devController.wipe);
-  app.post("/developer", devController.fill);
+  app.delete("/developer", massController.wipe);
+  app.post("/developer", massController.fill);
 };

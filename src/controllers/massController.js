@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+
 const User = require("../models/user");
-const Center = require("../models/vaccinationCenter").default;
-const OTP = require("../models/otp").default;
+const Center = require("../models/vaccinationCenter");
+const OTP = require("../models/otp");
 const Appointment = require("../models/appointment");
 const Cities = require("../../cities");
 
@@ -10,29 +11,34 @@ const Cities = require("../../cities");
 
 // Wipes all data from the Database
 exports.wipe = function (req, res) {
-  User.deleteMany({}, function (err) {
-    if (err)
-      res.status(500).send({ error: "Unable to delete users" });
+  User.deleteMany({}, function (err, docs) {
+    if (err) {
+      res.status(500).send({ error: err });
+    }
   });
 
-  Center.deleteMany({}, function (err) {
-    if (err)
-      res.status(500).send({ error: "Unable to delete centers" });
+  Center.deleteMany({}, function (err, docs) {
+    if (err) {
+      res.status(500).send({ error: err });
+    }
   });
 
-  OTP.deleteMany({}, function (err) {
-    if (err)
-      res.status(500).send({ error: "Unable to delete OTPs" });
+  OTP.deleteMany({}, function (err, docs) {
+    if (err) {
+      res.status(500).send({ error: err });
+    }
   });
 
-  Appointment.deleteMany({}, (err) => {
-    if (err)
-      res.status(500).send({ error: "Unable to delete appointments" });
+  Appointment.deleteMany({}, function (err, docs) {
+    if (err) {
+      res.status(500).send({ error: err });
+    }
   });
 
   OTP.collection.dropIndexes();
   Appointment.collection.dropIndexes();
-  res.status(200).send({ msg: "Database cleared" });
+
+  res.status(200).send({ msg: "Database wiped" });
 };
 
 // Creates dummy centers for all cities
@@ -42,13 +48,13 @@ exports.fill = function (req, res) {
 
   const type = ["Hospital", "Hospital", "Center", "Clinic", "Healthcenter", "School"];
 
-  for (let ct of Cities.DB) {
-    var state = ct.state;
+  for (let i = 0; i < Cities.DB.length; i++) {
+    var state = Cities.DB[i].state;
 
-    for (let centr of ct.cities) {
+    for (let j = 0; j < Cities.DB[i].cities.length; j++) {
       // Two centers for each city (T/V/C)
       for (let k = 0; k < 2; k++) {
-        var city = centr;
+        var city = Cities.DB[i].cities[j];
         var pin = Math.floor(Math.random() * 899999) + 100000;
         var name =
           alphabet[Math.floor(Math.random() * 26)] +
@@ -57,14 +63,20 @@ exports.fill = function (req, res) {
           " " +
           type[Math.floor(Math.random() * 6)];
 
-        // New center instance
         var center = new Center();
         center.centerName = name;
         center.state = state;
         center.city = city;
         center.pinCode = pin;
         center.slotsAvailable = 100;
+
         console.log(center);
+
+        // center.save(function (err, savedCenter) {
+        //   if (err) {
+        //     res.status(500).send({ error: err });
+        //   }
+        // });
       }
     }
   }
