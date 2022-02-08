@@ -41,7 +41,7 @@ exports.create = (req, res) => {
           // Check if the user has already booked an appointment recently
           if (!recentlyBooked(user.appointmentId)) {
             Center.findById(centerId, function (errr, center) {
-              if (errr){
+              if (!(errr)){
                 if (center != null) {
                   // Validate Date
                   const appointmentDate = new Date(date);
