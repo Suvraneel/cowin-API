@@ -1,62 +1,51 @@
 const mongoose = require("mongoose");
 
-const OTP = require("../models/otp").default;
+const OTP = require("../models/otp");
 const User = require("../models/user");
 const Appointment = require("../models/appointment");
 
 // Generate OTP for validation
-exports.generate = function (req, res) {
+exports.generate = (req, res) => {
   if (Object.keys(req.body).length === 0 || req.body.mobile === null) {
-    res.status(400).send({ msg: "Please provide a body for the request" });
+    res.status(400).send({ msg: "Request Body Missing" });
   } else {
     var otp = new OTP();
     otp.mobile = req.body.mobile;
 
     // OTP generation
-    otp.code = Math.floor(Math.random() * 8999) + 1000;
+    otp.code = (Math.floor(Math.random() * 99999) + 100000)%100000; // 5 digit OTP
 
     otp.save(function (error, savedOTP) {
-      if (error) {
-        // send error response
+      if (error)
         res.status(500).send({ error: "Unable to create OTP" });
-      } else {
-        // send OTP through SMS.
-        res.status(200).send(savedOTP);
-      }
+      else res.status(200).send(savedOTP);
     });
   }
 };
 
 // Validate OTP
-exports.validate = function (req, res) {
-  if (Object.keys(req.body).length === 0 || req.body.mobile === null) {
+exports.validate = (req, res) => {
+  if (Object.keys(req.body).length === 0 || req.body.mobile === null)
     return res.status(400).send({ msg: "Please provide a body for the request" });
-  }
 
   const mobile = req.body.mobile;
   const code = req.body.code;
 
   OTP.findOne({ mobile: mobile, code: code }, function (error, otp) {
-    if (error) {
-      // send error response
-      res.status(500).send({ error: "Unable to fetch OTP" });
-    } else {
+    if (!(error)){
       // If OTP matched
       if (otp != null) {
         // Can use deleteOne {_id: otp._id} but this also works
-        otp.delete(function (err, deletedOtp) {
+        otp.delete((err, deletedOtp) => {
           if (err) {
             res.status(500).send({ error: "Unable to remove OTP" });
           } else {
             // Checks if user already exists
-            User.findOne({ mobile: mobile }, function (error, existingUser) {
-              if (error) {
-                res.status(500).send({ error: "Unable to fetch Users" });
-              } else {
-                if (existingUser != null) {
-                  // If a user is found
+            User.findOne({ mobile: mobile }, (error, existingUser) => {
+              if (error){
+                if (existingUser)
                   res.status(200).send(existingUser);
-                } else {
+                else {
                   // If not creates a new blank user
                   var user = new User();
 
@@ -66,22 +55,21 @@ exports.validate = function (req, res) {
                   user.appointmentId = "";
                   user.dosesTaken = 0;
 
-                  user.save(function (error, savedUser) {
-                    if (error) {
+                  user.save((error, savedUser) => {
+                    if (error)
                       res.status(500).send({ error: "Unable to create User" });
-                    } else {
-                      res.status(200).send(savedUser);
-                    }
+                    else res.status(200).send(savedUser);
                   });
                 }
               }
+              else res.status(500).send({ error: "Unable to find user" });
             });
           }
         });
-      } else {
-        res.status(205).send({ msg: "Invalid OTP" });
-      }
+      } 
+      else res.status(205).send({ msg: "Invalid OTP" });
     }
+    else res.status(500).send({ error: "Unable to fetch OTP" });
   });
 };
 
